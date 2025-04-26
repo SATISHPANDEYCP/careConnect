@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../context/AppContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
@@ -18,35 +18,42 @@ const Login = () => {
   const onSubmitHandler = async (event) => {
     event.preventDefault();
 
-    if (state === 'Sign Up') {
+    try {
+      if (state === 'Sign Up') {
 
-      const { data } = await axios.post(backendUrl + '/api/user/register', { name, email, password })
+        const { data } = await axios.post(backendUrl + '/api/user/register', { name, email, password })
 
-      if (data.success) {
-        localStorage.setItem('token', data.token)
-        setToken(data.token)
+        if (data.success) {
+          localStorage.setItem('token', data.token)
+          setToken(data.token)
+          toast.success("Account created successfully!")
+        } else {
+          toast.error(data.message)
+        }
+
       } else {
-        toast.error(data.message)
+
+        const { data } = await axios.post(backendUrl + '/api/user/login', { email, password })
+
+        if (data.success) {
+          localStorage.setItem('token', data.token)
+          setToken(data.token)
+          toast.success("Login successful!")
+        } else {
+          toast.error(data.message)
+        }
+
       }
-
-    } else {
-
-      const { data } = await axios.post(backendUrl + '/api/user/login', { email, password })
-
-      if (data.success) {
-        localStorage.setItem('token', data.token)
-        setToken(data.token)
-      } else {
-        toast.error(data.message)
-      }
-
+    } catch (error) {
+      toast.error("Something went wrong!")
     }
-
   }
 
   useEffect(() => {
     if (token) {
-      navigate('/')
+      setTimeout(() => {
+        navigate('/')
+      }, 1000);
     }
   }, [token])
 
