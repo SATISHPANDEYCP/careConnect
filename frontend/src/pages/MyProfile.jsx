@@ -168,7 +168,8 @@ const MyProfile = () => {
     }
 
     return userData ? (
-        <div className="max-w-2xl mx-auto p-8 bg-white shadow-lg rounded-2xl mt-10">
+        <div className="max-w-7xl w-[90%] mx-auto p-8 bg-white shadow-lg rounded-2xl mt-10">
+
             <div className="flex flex-col items-center gap-4">
 
                 {/* Profile Image Section */}
