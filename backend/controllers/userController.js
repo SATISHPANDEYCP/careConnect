@@ -133,19 +133,30 @@ const updateProfile = async (req, res) => {
   }
 };
 
-// API to book appointment
 const bookAppointment = async (req, res) => {
   try {
     const { userId, docId, slotDate, slotTime } = req.body;
+
     const docData = await doctorModel.findById(docId).select("-password");
 
     if (!docData.available) {
       return res.json({ success: false, message: "Doctor Not Available" });
     }
 
-    let slots_booked = docData.slots_booked;
+    // 1. Check in appointment collection if this slot is already booked
+    const existingAppointment = await appointmentModel.findOne({
+      docId,
+      slotDate,
+      slotTime,
+      cancelled: false, // Only check active appointments
+    });
 
-    // checking for slot availablity
+    if (existingAppointment) {
+      return res.json({ success: false, message: "Slot Already Booked" });
+    }
+
+    // 2. Checking in doctor's slots_booked field
+    let slots_booked = docData.slots_booked;
     if (slots_booked[slotDate]) {
       if (slots_booked[slotDate].includes(slotTime)) {
         return res.json({ success: false, message: "Slot Not Available" });
@@ -153,12 +164,10 @@ const bookAppointment = async (req, res) => {
         slots_booked[slotDate].push(slotTime);
       }
     } else {
-      slots_booked[slotDate] = [];
-      slots_booked[slotDate].push(slotTime);
+      slots_booked[slotDate] = [slotTime];
     }
 
     const userData = await userModel.findById(userId).select("-password");
-
     delete docData.slots_booked;
 
     const appointmentData = {
@@ -175,10 +184,10 @@ const bookAppointment = async (req, res) => {
     const newAppointment = new appointmentModel(appointmentData);
     await newAppointment.save();
 
-    // save new slots data in docData
+    // Save updated slots
     await doctorModel.findByIdAndUpdate(docId, { slots_booked });
 
-    res.json({ success: true, message: "Appointment Booked" });
+    res.json({ success: true, message: "Appointment Booked Successfully" });
   } catch (error) {
     console.log(error);
     res.json({ success: false, message: error.message });
