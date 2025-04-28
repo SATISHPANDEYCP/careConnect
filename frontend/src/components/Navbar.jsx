@@ -28,7 +28,7 @@ const Navbar = () => {
             <span className="inline-block transition-all duration-300 group-hover:translate-y-[2px] group-hover:scale-[1.1]">
               HOME
             </span>
-            <span className="absolute left-1/2 bottom-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-3/5 group-hover:left-[20%] group-hover:bottom-[-2px]"></span>
+            <span className="absolute left-1/2 bottom-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-3/5 group-hover:left-[20%] group-hover:bottom-[-4px]"></span>
           </li>
         </NavLink>
 
@@ -37,7 +37,7 @@ const Navbar = () => {
             <span className="inline-block transition-all duration-300 group-hover:translate-y-[2px] group-hover:scale-[1.1]">
               ALL DOCTORS
             </span>
-            <span className="absolute left-1/2 bottom-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-3/5 group-hover:left-[20%] group-hover:bottom-[-2px]"></span>
+            <span className="absolute left-1/2 bottom-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-3/5 group-hover:left-[20%] group-hover:bottom-[-4px]"></span>
           </li>
         </NavLink>
 
@@ -46,7 +46,7 @@ const Navbar = () => {
             <span className="inline-block transition-all duration-300 group-hover:translate-y-[2px] group-hover:scale-[1.1]">
               ABOUT
             </span>
-            <span className="absolute left-1/2 bottom-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-3/5 group-hover:left-[20%]"></span>
+            <span className="absolute left-1/2 bottom-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-3/5 group-hover:left-[20%] group-hover:bottom-[-4px]"></span>
           </li>
         </NavLink>
 
@@ -55,7 +55,7 @@ const Navbar = () => {
             <span className="inline-block transition-all duration-300 group-hover:translate-y-[2px] group-hover:scale-[1.1]">
               CONTACT
             </span>
-            <span className="absolute left-1/2 bottom-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-3/5 group-hover:left-[20%]"></span>
+            <span className="absolute left-1/2 bottom-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-3/5 group-hover:left-[20%] group-hover:bottom-[-4px]"></span>
           </li>
         </NavLink>
       </ul>
@@ -63,7 +63,11 @@ const Navbar = () => {
       <div className="flex items-center gap-4">
         {token && userData ? (
           <div className="flex items-center gap-2 cursor-pointer group relative">
-            <img className="w-10 h-10 rounded-full hover:scale-110 transition-transform duration-300" src={userData.image} alt="" />
+            <img
+              className="w-10 h-10 rounded-full hover:scale-110 transition-transform duration-300"
+              src={userData.image}
+              alt=""
+            />
             <img className="w-2.5" src={assets.dropdown_icon} alt="" />
             <div className="absolute top-0 right-0 pt-14 text-base font-medium text-gray-600 z-20 hidden group-hover:block">
               <div className="min-w-48 bg-gray-50 rounded flex flex-col gap-4 p-4 shadow-lg">
@@ -105,7 +109,9 @@ const Navbar = () => {
 
         {/* ---- Mobile Menu ---- */}
         <div
-          className={`md:hidden ${showMenu ? "fixed w-full" : "h-0 w-0"} right-0 top-0 bottom-0 z-20 overflow-hidden bg-white transition-all`}
+          className={`md:hidden ${
+            showMenu ? "fixed w-full" : "h-0 w-0"
+          } right-0 top-0 bottom-0 z-20 overflow-hidden bg-white transition-all`}
         >
           <div className="flex items-center justify-between px-5 py-6">
             <img src={assets.logo} className="w-36" alt="" />
