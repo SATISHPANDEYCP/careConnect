@@ -1,3 +1,4 @@
+import otpGenerator from "otp-generator";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import validator from "validator";
@@ -16,7 +17,6 @@ const razorpayInstance = new razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// API to register user
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -26,40 +26,87 @@ const registerUser = async (req, res) => {
     }
 
     if (!validator.isEmail(email)) {
-      return res.json({
-        success: false,
-        message: "Please enter a valid email",
-      });
+      return res.json({ success: false, message: "Please enter a valid email" });
     }
 
     if (password.length < 8) {
-      return res.json({
-        success: false,
-        message: "Please enter a strong password",
-      });
+      return res.json({ success: false, message: "Password must be at least 8 characters" });
+    }
+
+    const userExists = await userModel.findOne({ email });
+    if (userExists) {
+      return res.json({ success: false, message: "User already exists" });
     }
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    const userData = { name, email, password: hashedPassword };
-    const newUser = new userModel(userData);
-    const user = await newUser.save();
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
 
-    // ✉️ Send welcome email
+
+    const newUser = new userModel({
+      name,
+      email,
+      password: hashedPassword,
+      verificationCode: otp,
+      isVerified: false,
+    });
+
+    await newUser.save();
+
     await sendEmail(
       email,
-      "Welcome to CareConnect",
-      `Hi ${name},\n\nThank you for registering on CareConnect!\n\nWe're excited to have you onboard.\n\n– Team CareConnect`
+      "CareConnect Email Verification",
+      `Hi ${name},\n\nYour OTP for CareConnect verification is: ${otp}\n\nValid for 5 minutes.\n\n– Team CareConnect`
     );
 
-    res.json({ success: true, token });
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+    res.json({
+      success: true,
+      token,
+      message: "User registered. OTP sent to email.",
+    });
   } catch (error) {
     console.log(error);
-    res.json({ success: false, message: error.message });
+    res.json({ success: false, message: "Something went wrong." });
   }
 };
+
+
+// API to Verify OTP
+const verifyOtp = async (req, res) => {
+  const { email, otp } = req.body;
+
+  if (!email || !otp) {
+    return res.json({ success: false, message: "Email and OTP are required" });
+  }
+
+  const user = await userModel.findOne({ email });
+
+  if (!user || !user.verificationCode) {
+    return res.json({ success: false, message: "OTP not found" });
+  }
+
+  if (otp !== user.verificationCode) {
+    return res.json({ success: false, message: "Invalid OTP" });
+  }
+
+  user.isVerified = true;
+  user.verificationCode = undefined;
+  await user.save();
+
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+  res.json({
+    success: true,
+    message: "OTP verified successfully",
+    token,
+  });
+};
+
+
+
+
 
 // API to login user
 const loginUser = async (req, res) => {
@@ -357,6 +404,7 @@ const verifyStripe = async (req, res) => {
 export {
   loginUser,
   registerUser,
+  verifyOtp,
   getProfile,
   updateProfile,
   bookAppointment,
