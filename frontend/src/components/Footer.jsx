@@ -35,6 +35,9 @@ const Footer = () => {
           <p className="text-xl font-medium mb-5">GET IN TOUCH</p>
           <ul className="flex flex-col gap-2 text-gray-600">
             <li>careconnectowner@gmail.com</li>
+            <li>+91 9451408951</li>
+            <li>+91 9453218589</li>
+            <li>+91 7905839984</li>
           </ul>
         </div>
       </div>
@@ -42,7 +45,7 @@ const Footer = () => {
       <div>
         <hr />
         <p className="py-5 text-sm text-center">
-        © 2025 CareConnect. All rights reserved.
+          © 2025 CareConnect. All rights reserved.
         </p>
       </div>
     </div>
