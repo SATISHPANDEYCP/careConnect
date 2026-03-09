@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import appointmentModel from "../models/appointmentModel.js";
 import doctorModel from "../models/doctorModel.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import validator from "validator";
 import { v2 as cloudinary } from "cloudinary";
 import userModel from "../models/userModel.js";
@@ -106,6 +106,7 @@ const addDoctor = async (req, res) => {
     // upload image to cloudinary
     const imageUpload = await cloudinary.uploader.upload(imageFile.path, {
       resource_type: "image",
+      folder: "CareConnect/doctors"
     });
     const imageUrl = imageUpload.secure_url;
 
