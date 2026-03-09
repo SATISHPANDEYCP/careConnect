@@ -1,6 +1,6 @@
 import otpGenerator from "otp-generator";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import validator from "validator";
 import userModel from "../models/userModel.js";
 import doctorModel from "../models/doctorModel.js";
@@ -167,6 +167,7 @@ const updateProfile = async (req, res) => {
       // upload image to cloudinary
       const imageUpload = await cloudinary.uploader.upload(imageFile.path, {
         resource_type: "image",
+        folder: "CareConnect/users"
       });
       const imageURL = imageUpload.secure_url;
 
