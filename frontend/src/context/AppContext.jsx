@@ -44,11 +44,21 @@ const AppContextProvider = (props) => {
                 setUserData(data.userData)
             } else {
                 toast.error(data.message)
+                // Clear invalid token
+                if (data.message.includes('invalid signature') || data.message.includes('jwt')) {
+                    localStorage.removeItem('token')
+                    setToken('')
+                }
             }
 
         } catch (error) {
             console.log(error)
             toast.error(error.message)
+            // Clear invalid token
+            if (error.message.includes('invalid signature') || error.message.includes('jwt')) {
+                localStorage.removeItem('token')
+                setToken('')
+            }
         }
 
     }

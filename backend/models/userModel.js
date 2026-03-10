@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema(
     dob: { type: String, default: "Not Selected" },
     password: { type: String, required: true },
     isVerified: {
-      type: String,
+      type: Boolean,
       default: false,
     },
     verificationCode: String,

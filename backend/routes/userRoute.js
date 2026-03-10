@@ -12,6 +12,7 @@ import {
   paymentStripe,
   verifyStripe,
   verifyOtp,
+  resendOtp,
 } from "../controllers/userController.js";
 import upload from "../middleware/multer.js";
 import authUser from "../middleware/authUser.js";
@@ -19,6 +20,7 @@ const userRouter = express.Router();
 
 userRouter.post("/register", registerUser);
 userRouter.post("/verify-otp", verifyOtp);
+userRouter.post("/resend-otp", resendOtp);
 
 userRouter.post("/login", loginUser);
 

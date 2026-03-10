@@ -54,11 +54,23 @@ const registerUser = async (req, res) => {
 
     await newUser.save();
 
-    await sendEmail(
-      email,
-      "CareConnect Email Verification",
-      `Hi ${name},\n\nYour OTP for CareConnect verification is: ${otp}\n\nValid for 5 minutes.\n\n– Team CareConnect`
-    );
+    // Send verification email
+    try {
+      await sendEmail(
+        email,
+        "CareConnect Email Verification",
+        `Hi ${name},\n\nYour OTP for CareConnect verification is: ${otp}\n\nValid for 5 minutes.\n\n– Team CareConnect`
+      );
+    } catch (emailError) {
+      console.log("Email sending failed:", emailError.message);
+      // User is registered but email failed - still return success with warning
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+      return res.json({
+        success: true,
+        token,
+        message: "User registered but email delivery failed. Please contact support for OTP.",
+      });
+    }
 
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
     res.json({
@@ -68,7 +80,7 @@ const registerUser = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.json({ success: false, message: "Something went wrong." });
+    res.json({ success: false, message: error.message || "Something went wrong." });
   }
 };
 
@@ -104,6 +116,48 @@ const verifyOtp = async (req, res) => {
   });
 };
 
+// API to resend OTP
+const resendOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.json({ success: false, message: "Email is required" });
+    }
+
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
+    if (user.isVerified) {
+      return res.json({ success: false, message: "User already verified" });
+    }
+
+    // Generate new OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    user.verificationCode = otp;
+    await user.save();
+
+    // Send email
+    try {
+      await sendEmail(
+        email,
+        "CareConnect - Resend OTP",
+        `Hi ${user.name},\n\nYour new OTP for CareConnect verification is: ${otp}\n\nValid for 5 minutes.\n\n– Team CareConnect`
+      );
+      res.json({ success: true, message: "OTP sent to your email" });
+    } catch (emailError) {
+      console.log("Email sending failed:", emailError.message);
+      res.json({ success: false, message: "Failed to send OTP. Please try again." });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
 
 
 
@@ -116,6 +170,16 @@ const loginUser = async (req, res) => {
 
     if (!user) {
       return res.json({ success: false, message: "User does not exist" });
+    }
+
+    // Check if user is verified
+    if (!user.isVerified) {
+      return res.json({ 
+        success: false, 
+        message: "Please verify your email before logging in",
+        isVerified: false,
+        email: user.email
+      });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -406,6 +470,7 @@ export {
   loginUser,
   registerUser,
   verifyOtp,
+  resendOtp,
   getProfile,
   updateProfile,
   bookAppointment,
