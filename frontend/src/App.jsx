@@ -1,4 +1,3 @@
-import React from 'react'
 import Navbar from './components/Navbar'
 import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
@@ -16,7 +15,7 @@ import Verify from './pages/Verify'
 
 const App = () => {
   return (
-    <div className='mx-4 sm:mx-[10%]'>
+    <div className='mx-auto w-full max-w-[1800px] px-4 sm:px-6 lg:px-10'>
       <ToastContainer />
       <Navbar />
       <Routes>
