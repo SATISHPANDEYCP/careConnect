@@ -1,7 +1,10 @@
 
 import { assets } from '../assets/assets'
+import { useNavigate } from 'react-router-dom'
 
 const Contact = () => {
+  const navigate = useNavigate()
+
   return (
     <div className='mx-auto w-full max-w-[1300px]'>
 
@@ -17,7 +20,7 @@ const Contact = () => {
           <p className=' text-gray-500'>+91 9451408951 <br /> Email: careconnectowner@gmail.com</p>
           <p className=' font-semibold text-lg text-gray-600'>CAREERS AT CARECONNECT</p>
           <p className=' text-gray-500'>Learn more about our teams and job openings.</p>
-          <button className='rounded-lg border border-black px-8 py-4 text-sm transition-all duration-300 hover:bg-black hover:text-white'>Explore Jobs</button>
+          <button onClick={() => { navigate('/contact/careers'); scrollTo(0, 0) }} className='rounded-lg border border-black px-8 py-4 text-sm transition-all duration-300 hover:bg-black hover:text-white'>Explore Jobs</button>
         </div>
       </div>
 
