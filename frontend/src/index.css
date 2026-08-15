@@ -12,6 +12,14 @@
     @apply block
 }
 
+.nav-link.active {
+    @apply text-primary
+}
+
+.nav-link.active .nav-indicator {
+    @apply left-[20%] bottom-[-4px] w-3/5
+}
+
 @media (max-width:740px) {
     .active  p{
        @apply text-white bg-primary
