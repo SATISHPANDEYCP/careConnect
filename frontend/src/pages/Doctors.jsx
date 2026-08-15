@@ -81,6 +81,27 @@ const Doctors = () => {
             <DoctorCardSkeleton key={index} />
           ))}
 
+          {!isDoctorsLoading && filterDoc.length === 0 && (
+            <div className='col-span-full flex min-h-72 flex-col items-center justify-center rounded-xl border border-dashed border-[#C9D8FF] bg-[#F8F9FF] px-6 text-center'>
+              <svg className='mb-4 h-14 w-14 text-[#9DADFF]' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.5' aria-hidden='true'>
+                <path strokeLinecap='round' strokeLinejoin='round' d='M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.1a7.5 7.5 0 0 1 15 0M18 9.75l3 3m0-3-3 3' />
+              </svg>
+              <p className='text-lg font-medium text-[#262626]'>
+                {speciality ? `No ${speciality} doctors found` : 'No doctors available'}
+              </p>
+              <p className='mt-1 max-w-sm text-sm text-gray-500'>
+                {speciality
+                  ? 'There are currently no doctors listed in this category.'
+                  : 'There are currently no doctors listed. Please check again later.'}
+              </p>
+              {speciality && (
+                <button onClick={() => navigate('/doctors')} className='mt-5 rounded-full bg-primary px-6 py-2 text-sm text-white transition-opacity hover:opacity-90'>
+                  View all doctors
+                </button>
+              )}
+            </div>
+          )}
+
           {!isDoctorsLoading && filterDoc.map((item) => (
             <div onClick={() => { navigate(`/appointment/${item._id}`); scrollTo(0, 0) }} className='border border-[#C9D8FF] rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500' key={item._id}>
               <DoctorImage src={item.image} name={item.name} />
